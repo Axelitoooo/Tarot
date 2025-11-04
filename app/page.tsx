@@ -10,14 +10,16 @@ export default function Home() {
             Bienvenue sur l'application de Tarot Français en ligne
           </p>
           <div className="flex flex-col gap-4">
-            <button className="bg-wood-dark hover:bg-wood-darker text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
-              Créer une partie
-            </button>
-            <button className="bg-green-felt hover:bg-green-felt-dark text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
-              Rejoindre une partie
-            </button>
+            <a
+              href="/game"
+              className="bg-gradient-to-r from-yellow-600 to-yellow-800 hover:from-yellow-700 hover:to-yellow-900 text-white font-black text-2xl py-6 px-8 rounded-lg transition-all transform hover:scale-105 shadow-2xl text-center"
+            >
+              🎮 JOUER MAINTENANT
+            </a>
+            <p className="text-center text-sm text-gray-500 -mt-2">Nouvelle interface graphique !</p>
+
             <div className="border-t border-gray-300 my-2"></div>
-            <p className="text-sm text-gray-600 text-center">Pages de test</p>
+            <p className="text-sm text-gray-600 text-center">Pages de développement</p>
             <a
               href="/test-deck"
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center"
