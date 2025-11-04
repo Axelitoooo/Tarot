@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --wood-light: #D4A574;
+  --wood-medium: #8B6F47;
+  --wood-dark: #5C4A32;
+  --wood-darker: #3E2F1F;
+  --felt-green: #2C5F2D;
+  --felt-dark: #1F4620;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Wood texture effect with gradient */
+.wood-bg {
+  background: linear-gradient(
+    180deg,
+    var(--wood-light) 0%,
+    var(--wood-medium) 50%,
+    var(--wood-dark) 100%
+  );
+  background-size: 100% 100%;
+}
+
+/* Felt table effect */
+.felt-bg {
+  background: radial-gradient(
+    ellipse at center,
+    var(--felt-green) 0%,
+    var(--felt-dark) 100%
+  );
+}
+
+/* Card shadow effect */
+.card-shadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
+              0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.card-shadow:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4),
+              0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px);
+  transition: all 0.2s ease;
+}
