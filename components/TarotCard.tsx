@@ -42,19 +42,22 @@ export default function TarotCard({
   if (faceDown) {
     return (
       <div
-        className={`${sizeClasses[size]} rounded-lg cursor-default ${className}`}
+        className={`${sizeClasses[size]} rounded-lg cursor-default shadow-card ${className}`}
         style={{
-          background: 'linear-gradient(135deg, #8B4513 0%, #654321 50%, #8B4513 100%)',
-          boxShadow: '0 4px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+          background: 'linear-gradient(135deg, #8B4513 0%, #654321 30%, #4A2511 50%, #654321 70%, #8B4513 100%)',
+          boxShadow: '0 8px 16px rgba(0,0,0,0.4), inset 0 2px 0 rgba(255,255,255,0.15), inset 0 -2px 0 rgba(0,0,0,0.3)',
         }}
       >
-        <div className="w-full h-full flex items-center justify-center">
+        <div className="w-full h-full flex items-center justify-center p-2">
           <div
-            className="w-3/4 h-3/4 rounded border-4 border-yellow-700"
+            className="w-full h-full rounded border-4 border-gold-dark flex items-center justify-center"
             style={{
-              background: 'repeating-linear-gradient(45deg, #654321, #654321 10px, #8B4513 10px, #8B4513 20px)',
+              background: 'repeating-linear-gradient(45deg, #654321, #654321 8px, #8B4513 8px, #8B4513 16px)',
+              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.4)',
             }}
-          />
+          >
+            <div className="text-4xl opacity-50">🃏</div>
+          </div>
         </div>
       </div>
     );
@@ -69,17 +72,18 @@ export default function TarotCard({
         transition-all
         duration-300
         transform
-        ${onClick && isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-2' : ''}
+        ${onClick && isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-3 hover:shadow-card-hover' : ''}
         ${!isPlayable ? 'opacity-40 cursor-not-allowed' : ''}
-        ${isSelected ? 'ring-4 ring-blue-500 scale-105 -translate-y-2' : ''}
-        ${card.isOudler ? 'ring-2 ring-yellow-400' : ''}
+        ${isSelected ? 'ring-4 ring-blue-500 scale-105 -translate-y-3 shadow-card-hover' : 'shadow-card'}
+        ${card.isOudler ? 'ring-2 ring-gold animate-glow' : ''}
         ${className}
       `}
       style={{
-        background: 'linear-gradient(to bottom, #ffffff 0%, #f8f8f8 100%)',
-        boxShadow: isSelected
-          ? '0 12px 24px rgba(0,0,0,0.4), 0 4px 8px rgba(0,0,0,0.3)'
-          : '0 4px 12px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.1)',
+        background: `
+          linear-gradient(to bottom, #ffffff 0%, #fefefe 50%, #f8f8f8 100%),
+          linear-gradient(135deg, transparent 0%, rgba(255,215,0,0.05) 100%)
+        `,
+        border: '2px solid rgba(0,0,0,0.1)',
       }}
     >
       <div className="w-full h-full p-2 flex flex-col justify-between relative">

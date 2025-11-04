@@ -8,6 +8,7 @@ import { useSocket } from '@/lib/hooks/useSocket';
 import GameBoard from '@/components/GameBoard';
 import PlayerHand from '@/components/PlayerHand';
 import TarotCard from '@/components/TarotCard';
+import WoodBackground from '@/components/WoodBackground';
 import {
   getBidName,
   getBidMultiplier,
@@ -134,17 +135,25 @@ export default function RoomPage() {
   // Lobby - En attente de joueurs
   if (!gameState || gameState.phase === GamePhase.WAITING) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center p-8"
-        style={{
-          background: 'linear-gradient(135deg, #5C4A32 0%, #3E2F1F 50%, #2A1F14 100%)',
-        }}
-      >
+      <WoodBackground className="min-h-screen flex items-center justify-center p-8">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/50 pointer-events-none" />
+
         <div className="relative z-10 max-w-4xl w-full">
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-2xl shadow-2xl border-4 border-yellow-600">
-            <h1 className="text-5xl font-black text-yellow-400 mb-4 text-center">
-              🎴 Salon d'attente
+          <div className="bg-gradient-to-br from-wood-darker/95 to-wood-darkest/95 backdrop-blur-sm p-10 rounded-3xl shadow-wood border-4 border-wood-dark relative overflow-hidden">
+            {/* Grain de bois décoratif */}
+            <div className="absolute inset-0 bg-wood-grain opacity-10 pointer-events-none" />
+
+            {/* Coins décoratifs */}
+            <div className="absolute top-3 left-3 w-8 h-8 border-t-3 border-l-3 border-gold/50" />
+            <div className="absolute top-3 right-3 w-8 h-8 border-t-3 border-r-3 border-gold/50" />
+            <div className="absolute bottom-3 left-3 w-8 h-8 border-b-3 border-l-3 border-gold/50" />
+            <div className="absolute bottom-3 right-3 w-8 h-8 border-b-3 border-r-3 border-gold/50" />
+
+            <div className="relative z-10">
+            <h1 className="text-5xl font-black text-gold-light mb-4 text-center drop-shadow-lg">
+              🎴 SALON D'ATTENTE
             </h1>
+            <div className="w-32 h-1 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-6" />
 
             {/* Code de la room */}
             <div className="bg-black/50 p-6 rounded-xl mb-6 text-center">
@@ -259,9 +268,10 @@ export default function RoomPage() {
                 En attente de {gameState.playerCount - gameState.players.length} joueur(s)...
               </p>
             )}
+            </div>
           </div>
         </div>
-      </div>
+      </WoodBackground>
     );
   }
 
@@ -277,12 +287,8 @@ export default function RoomPage() {
   const isLastTrick = gameState.trickNumber === 18;
 
   return (
-    <div
-      className="min-h-screen flex flex-col relative overflow-hidden"
-      style={{
-        background: 'linear-gradient(135deg, #5C4A32 0%, #3E2F1F 50%, #2A1F14 100%)',
-      }}
-    >
+    <WoodBackground className="min-h-screen flex flex-col relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black/60 pointer-events-none z-0" />
       {/* Header */}
       <div className="relative z-10 bg-black/30 backdrop-blur-sm border-b border-yellow-900/50 px-6 py-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -580,6 +586,6 @@ export default function RoomPage() {
           </div>
         )}
       </div>
-    </div>
+    </WoodBackground>
   );
 }
