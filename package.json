@@ -1,7 +1,7 @@
 {
   "name": "tarot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Application web complète pour jouer au Tarot Français en ligne avec vos amis",
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
@@ -13,9 +13,19 @@
     "type": "git",
     "url": "http://local_proxy@127.0.0.1:25826/git/Axelitoooo/Tarot"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "tarot",
+    "tarot-francais",
+    "card-game",
+    "multiplayer",
+    "nextjs",
+    "socketio",
+    "typescript",
+    "tailwindcss",
+    "realtime"
+  ],
+  "author": "Axelitoooo",
+  "license": "MIT",
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.16",
     "@types/node": "^24.10.0",
