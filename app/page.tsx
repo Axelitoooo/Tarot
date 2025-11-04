@@ -11,12 +11,19 @@ export default function Home() {
           </p>
           <div className="flex flex-col gap-4">
             <a
-              href="/game"
-              className="bg-gradient-to-r from-yellow-600 to-yellow-800 hover:from-yellow-700 hover:to-yellow-900 text-white font-black text-2xl py-6 px-8 rounded-lg transition-all transform hover:scale-105 shadow-2xl text-center"
+              href="/multiplayer"
+              className="bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white font-black text-2xl py-6 px-8 rounded-lg transition-all transform hover:scale-105 shadow-2xl text-center"
             >
-              🎮 JOUER MAINTENANT
+              🌐 MULTIJOUEUR EN LIGNE
             </a>
-            <p className="text-center text-sm text-gray-500 -mt-2">Nouvelle interface graphique !</p>
+            <p className="text-center text-sm text-gray-500 -mt-2">Jouez avec vos amis en temps réel !</p>
+
+            <a
+              href="/game"
+              className="bg-gradient-to-r from-yellow-600 to-yellow-800 hover:from-yellow-700 hover:to-yellow-900 text-white font-black text-xl py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-xl text-center"
+            >
+              🎮 Mode Solo
+            </a>
 
             <div className="border-t border-gray-300 my-2"></div>
             <p className="text-sm text-gray-600 text-center">Pages de développement</p>
