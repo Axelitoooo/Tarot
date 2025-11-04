@@ -30,6 +30,12 @@ export default function Home() {
             >
               🎮 Test Enchères & Écart
             </a>
+            <a
+              href="/test-play"
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center"
+            >
+              🎴 Test Complet - Jouer
+            </a>
           </div>
         </div>
       </div>

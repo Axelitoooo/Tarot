@@ -313,3 +313,170 @@ export function getDefenders(gameState: GameState): Player[] {
   if (gameState.takerIndex === null) return [];
   return gameState.players.filter((_, i) => i !== gameState.takerIndex);
 }
+
+/**
+ * Interface pour les cartes jouées avec le joueur
+ */
+interface PlayedCard {
+  card: Card;
+  playerId: string;
+  playerIndex: number;
+}
+
+/**
+ * Joue une carte
+ */
+export function playCard(
+  gameState: GameState,
+  playerId: string,
+  card: Card
+): GameState {
+  if (gameState.phase !== GamePhase.PLAYING) {
+    throw new Error('Not in playing phase');
+  }
+
+  const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+  if (currentPlayer.id !== playerId) {
+    throw new Error('Not your turn');
+  }
+
+  // Vérifier que le joueur a cette carte
+  const hasCard = currentPlayer.hand.some(c => c.id === card.id);
+  if (!hasCard) {
+    throw new Error('You do not have this card');
+  }
+
+  // Vérifier que la carte peut être jouée
+  // Import des fonctions de tricks
+  const { canPlayCard } = require('./tricks');
+  const { canPlay, reason } = canPlayCard(
+    card,
+    currentPlayer.hand,
+    gameState.currentTrick.map((c, i) => ({
+      card: c,
+      playerId: gameState.players[i].id,
+    }))
+  );
+
+  if (!canPlay) {
+    throw new Error(reason || 'Cannot play this card');
+  }
+
+  // Retirer la carte de la main du joueur
+  const newHand = currentPlayer.hand.filter(c => c.id !== card.id);
+
+  const players = gameState.players.map((p, i) =>
+    i === gameState.currentPlayerIndex ? { ...p, hand: sortCards(newHand) } : p
+  );
+
+  // Ajouter la carte au pli actuel
+  const currentTrick = [...gameState.currentTrick, card];
+
+  // Si le pli est complet, le résoudre
+  if (currentTrick.length === gameState.playerCount) {
+    return resolveTrick({ ...gameState, players, currentTrick });
+  }
+
+  // Sinon, passer au joueur suivant
+  const nextPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.playerCount;
+
+  return {
+    ...gameState,
+    players,
+    currentTrick,
+    currentPlayerIndex: nextPlayerIndex,
+  };
+}
+
+/**
+ * Résout un pli complet
+ */
+function resolveTrick(gameState: GameState): GameState {
+  const { getTrickWinner, hasPetitInTrick, checkPetitAuBout, hasExcuseInTrick, getExcusePlayer, handleExcuse } = require('./tricks');
+
+  // Créer les cartes jouées avec leurs joueurs
+  const playedCards: PlayedCard[] = gameState.currentTrick.map((card, offset) => {
+    // Le premier joueur du pli est celui qui a entamé
+    // On doit calculer l'index correct
+    const startIndex = gameState.currentPlayerIndex - gameState.currentTrick.length + 1;
+    const playerIndex = (startIndex + offset + gameState.playerCount) % gameState.playerCount;
+    return {
+      card,
+      playerId: gameState.players[playerIndex].id,
+      playerIndex,
+    };
+  });
+
+  // Déterminer le gagnant
+  const winnerId = getTrickWinner(playedCards);
+  const winnerIndex = gameState.players.findIndex(p => p.id === winnerId);
+
+  // Vérifier le Petit au bout
+  const isLastTrick = gameState.trickNumber === 18;
+  let petitAuBout = gameState.petitAuBout;
+
+  if (isLastTrick && hasPetitInTrick(playedCards)) {
+    const { isPetitAuBout } = checkPetitAuBout(playedCards, gameState.trickNumber);
+    petitAuBout = isPetitAuBout;
+  }
+
+  // Gérer l'Excuse
+  let trickCards = [...gameState.currentTrick];
+  let excuseCard: Card | null = null;
+
+  if (hasExcuseInTrick(playedCards)) {
+    const { excuseOwnerId, shouldExchangeCard } = handleExcuse(
+      playedCards,
+      winnerId,
+      isLastTrick
+    );
+
+    excuseCard = gameState.currentTrick.find(c => c.suit === 'EXCUSE') || null;
+
+    if (excuseOwnerId !== winnerId && !isLastTrick) {
+      // L'Excuse reste à son propriétaire
+      // Retirer l'Excuse du pli
+      trickCards = trickCards.filter(c => c.suit !== 'EXCUSE');
+
+      // Ajouter l'Excuse aux plis du propriétaire
+      const excuseOwnerIndex = gameState.players.findIndex(p => p.id === excuseOwnerId);
+      if (excuseOwnerIndex !== -1 && excuseCard) {
+        const players = gameState.players.map((p, i) =>
+          i === excuseOwnerIndex
+            ? { ...p, tricksWon: [...p.tricksWon, [excuseCard]] }
+            : p
+        );
+        gameState = { ...gameState, players };
+      }
+    }
+  }
+
+  // Ajouter le pli aux plis gagnés du gagnant
+  const players = gameState.players.map((p, i) =>
+    i === winnerIndex
+      ? { ...p, tricksWon: [...p.tricksWon, trickCards] }
+      : p
+  );
+
+  // Vérifier si c'était le dernier pli
+  if (isLastTrick) {
+    return {
+      ...gameState,
+      players,
+      currentTrick: [],
+      phase: GamePhase.SCORING,
+      petitAuBout,
+    };
+  }
+
+  // Passer au pli suivant
+  // Le gagnant du pli entame le suivant
+  return {
+    ...gameState,
+    players,
+    currentTrick: [],
+    currentPlayerIndex: winnerIndex,
+    trickNumber: gameState.trickNumber + 1,
+    petitAuBout,
+  };
+}

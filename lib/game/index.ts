@@ -54,4 +54,21 @@ export {
   getCurrentPlayer,
   getTaker,
   getDefenders,
+  playCard,
 } from './gameManager';
+
+export {
+  getLeadSuit,
+  getTrickWinner,
+  hasExcuseInTrick,
+  getExcusePlayer,
+  handleExcuse,
+  hasPetitInTrick,
+  getPetitPlayer,
+  checkPetitAuBout,
+  calculateTrickPoints,
+  canPlayCard,
+  getPlayableCardsInTrick,
+} from './tricks';
+
+export type { PlayedCard } from './tricks';
