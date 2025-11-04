@@ -55,6 +55,7 @@ export {
   getTaker,
   getDefenders,
   playCard,
+  calculateFinalScores,
 } from './gameManager';
 
 export {
@@ -70,5 +71,15 @@ export {
   canPlayCard,
   getPlayableCardsInTrick,
 } from './tricks';
+
+export {
+  calculateRoundScore,
+  distributeScores,
+  calculateFullRoundResult,
+  detectPoignee,
+  checkChelemRealized,
+  getResultDescription,
+  formatScore,
+} from './scoring';
 
 export type { PlayedCard } from './tricks';

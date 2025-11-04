@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { GameState, BidType, GamePhase, PlayerCount } from '@/types/game';
+import { useState, useEffect } from 'react';
+import { GameState, BidType, GamePhase, PlayerCount, RoundResult, POIGNEE_POINTS } from '@/types/game';
 import { Card, Suit } from '@/types/card';
 import {
   createGame,
@@ -11,13 +11,17 @@ import {
   takeDog,
   makeDiscard,
   playCard,
+  calculateFinalScores,
   getBidName,
+  getBidMultiplier,
   getCardName,
   getSuitSymbol,
   getDiscardableCards,
   countOudlers,
   calculatePoints,
   getPlayableCardsInTrick,
+  calculateFullRoundResult,
+  formatScore,
 } from '@/lib/game';
 
 export default function TestPlayPage() {
@@ -26,6 +30,51 @@ export default function TestPlayPage() {
   const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string>('');
   const [autoPlay, setAutoPlay] = useState(false);
+  const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
+
+  // Calculer automatiquement les scores quand on arrive en phase SCORING
+  useEffect(() => {
+    if (gameState && gameState.phase === GamePhase.SCORING && !roundResult) {
+      try {
+        if (gameState.takerIndex === null || !gameState.currentBid) return;
+
+        const taker = gameState.players[gameState.takerIndex];
+        const takerCards = taker.tricksWon.flat();
+
+        // Ajouter le chien si nécessaire
+        const { getDogOwner } = require('@/lib/game/bidding');
+        const dogOwner = getDogOwner(gameState.currentBid);
+        const finalTakerCards = dogOwner === 'taker' ? [...takerCards, ...gameState.dog] : takerCards;
+
+        // Déterminer qui a gagné le Petit au bout
+        let petitAuBoutWinner: 'taker' | 'defenders' = 'taker';
+        if (gameState.petitAuBout) {
+          const petitInTakerCards = finalTakerCards.some(
+            c => c.suit === 'TRUMP' && c.trumpNumber === 1
+          );
+          petitAuBoutWinner = petitInTakerCards ? 'taker' : 'defenders';
+        }
+
+        const result = calculateFullRoundResult(
+          finalTakerCards,
+          gameState.discard,
+          taker.id,
+          gameState.players.map(p => p.id),
+          gameState.currentBid,
+          gameState.petitAuBout,
+          petitAuBoutWinner,
+          gameState.poignee || 'NONE',
+          'taker',
+          gameState.chelemAnnounced,
+          gameState.chelemRealized
+        );
+
+        setRoundResult(result);
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    }
+  }, [gameState, roundResult]);
 
   const handleCreateGame = () => {
     const playerNames = Array.from({ length: playerCount }, (_, i) => `Joueur ${i + 1}`);
@@ -34,6 +83,7 @@ export default function TestPlayPage() {
     setGameState(gameWithCards);
     setSelectedCards(new Set());
     setError('');
+    setRoundResult(null);
   };
 
   const handleBid = (bidType: BidType) => {
@@ -443,45 +493,108 @@ export default function TestPlayPage() {
         )}
 
         {/* Phase de scoring */}
-        {gameState.phase === GamePhase.SCORING && (
+        {gameState.phase === GamePhase.SCORING && roundResult && (
           <div className="bg-white/90 rounded-lg shadow-xl p-6 mb-4">
-            <h2 className="text-2xl font-bold mb-4 text-center">🏆 Fin de la manche</h2>
+            <h2 className="text-3xl font-bold mb-6 text-center">🏆 Fin de la manche</h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {gameState.players.map(player => {
-                const allCards = player.tricksWon.flat();
-                const points = calculatePoints(allCards);
-                const oudlers = countOudlers(allCards);
-
-                return (
-                  <div
-                    key={player.id}
-                    className={`p-4 rounded-lg ${
-                      player.isTaker ? 'bg-orange-100 border-2 border-orange-500' : 'bg-gray-100'
-                    }`}
-                  >
-                    <div className="font-bold text-lg">{player.name}</div>
-                    <div className="text-sm">
-                      <div>Plis: {player.tricksWon.length}</div>
-                      <div>Points: {points}</div>
-                      <div>Bouts: {oudlers}</div>
-                      {player.isTaker && <div className="text-orange-600 font-semibold mt-2">PRENEUR</div>}
-                    </div>
-                  </div>
-                );
-              })}
+            {/* Résultat du contrat */}
+            <div className={`p-6 rounded-lg mb-6 text-center ${
+              roundResult.contractMade
+                ? 'bg-green-100 border-2 border-green-500'
+                : 'bg-red-100 border-2 border-red-500'
+            }`}>
+              <div className="text-3xl font-bold mb-2">
+                {roundResult.contractMade ? '✅ CONTRAT RÉUSSI' : '❌ CONTRAT CHUTÉ'}
+              </div>
+              <div className="text-xl mb-3">
+                {getBidName(roundResult.bid)}
+              </div>
+              <div className="text-lg">
+                <span className="font-bold">{roundResult.takerPoints} points</span>
+                {' '}(requis: {roundResult.requiredPoints})
+                {' '}avec <span className="font-bold">{roundResult.oudlersCount} Bout(s)</span>
+              </div>
             </div>
 
-            {gameState.petitAuBout && (
-              <div className="bg-yellow-100 border-2 border-yellow-500 p-4 rounded-lg mb-4 text-center">
-                <div className="font-bold text-lg">⭐ Petit au Bout !</div>
-                <div className="text-sm">+10 points pour le camp qui a gagné le dernier pli</div>
+            {/* Détails du calcul */}
+            <div className="bg-gray-50 p-4 rounded-lg mb-6">
+              <h3 className="font-bold text-lg mb-3">📊 Détail du calcul</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Score de base (25 + écart):</span>
+                  <span className="font-bold">{Math.round((roundResult.totalPoints - roundResult.chelemBonus - (roundResult.poignee !== 'NONE' ? POIGNEE_POINTS[roundResult.poignee] : 0)) / getBidMultiplier(roundResult.bid))} pts</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Multiplicateur ({getBidName(roundResult.bid)}):</span>
+                  <span className="font-bold">x{getBidMultiplier(roundResult.bid)}</span>
+                </div>
+                {roundResult.petitAuBout && (
+                  <div className="flex justify-between text-yellow-700">
+                    <span>⭐ Petit au Bout:</span>
+                    <span className="font-bold">+10 pts (multipliable)</span>
+                  </div>
+                )}
+                {roundResult.poignee !== 'NONE' && (
+                  <div className="flex justify-between text-purple-700">
+                    <span>🤚 {roundResult.poignee === 'SIMPLE' ? 'Simple' : roundResult.poignee === 'DOUBLE' ? 'Double' : 'Triple'} Poignée:</span>
+                    <span className="font-bold">+{POIGNEE_POINTS[roundResult.poignee]} pts (non multipliable)</span>
+                  </div>
+                )}
+                {roundResult.chelemBonus !== 0 && (
+                  <div className="flex justify-between text-blue-700">
+                    <span>🏆 Chelem:</span>
+                    <span className="font-bold">{formatScore(roundResult.chelemBonus)} pts</span>
+                  </div>
+                )}
+                <div className="border-t border-gray-300 pt-2 mt-2"></div>
+                <div className="flex justify-between text-lg font-bold">
+                  <span>Score total:</span>
+                  <span className={roundResult.totalPoints >= 0 ? 'text-green-600' : 'text-red-600'}>
+                    {formatScore(roundResult.totalPoints)} pts
+                  </span>
+                </div>
               </div>
-            )}
+            </div>
 
-            <p className="text-center text-gray-600 mb-4">
-              Le calcul des scores sera implémenté en Phase 5
-            </p>
+            {/* Scores des joueurs */}
+            <div className="mb-6">
+              <h3 className="font-bold text-lg mb-3">📈 Scores des joueurs</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {gameState.players.map(player => {
+                  const playerScore = roundResult.playerScores[player.id];
+                  const isTaker = player.isTaker;
+
+                  return (
+                    <div
+                      key={player.id}
+                      className={`p-4 rounded-lg ${
+                        isTaker
+                          ? 'bg-orange-100 border-2 border-orange-500'
+                          : 'bg-gray-100 border border-gray-300'
+                      }`}
+                    >
+                      <div className="font-bold mb-1">{player.name}</div>
+                      {isTaker && (
+                        <div className="text-xs text-orange-600 font-semibold mb-2">PRENEUR</div>
+                      )}
+                      <div className="text-sm mb-2">
+                        {player.tricksWon.length} plis
+                      </div>
+                      <div className={`text-2xl font-bold ${
+                        playerScore >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {formatScore(playerScore)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Note explicative */}
+            <div className="text-center text-sm text-gray-600 bg-blue-50 p-3 rounded">
+              ℹ️ Le Preneur gagne/perd 3× le score total, chaque Défenseur gagne/perd 1× le score total (signe inversé)
+            </div>
           </div>
         )}
 

@@ -480,3 +480,77 @@ function resolveTrick(gameState: GameState): GameState {
     petitAuBout,
   };
 }
+
+/**
+ * Calcule les scores à la fin de la manche
+ */
+export function calculateFinalScores(gameState: GameState): GameState {
+  if (gameState.phase !== GamePhase.SCORING) {
+    throw new Error('Not in scoring phase');
+  }
+
+  if (gameState.takerIndex === null || !gameState.currentBid) {
+    throw new Error('No taker or bid');
+  }
+
+  const { calculateFullRoundResult } = require('./scoring');
+  const { getDogOwner } = require('./bidding');
+
+  const taker = gameState.players[gameState.takerIndex];
+
+  // Récupérer toutes les cartes du preneur
+  const takerCards = taker.tricksWon.flat();
+
+  // Ajouter le chien au camp approprié selon l'enchère
+  const dogOwner = getDogOwner(gameState.currentBid);
+  let finalTakerCards = takerCards;
+
+  if (dogOwner === 'taker') {
+    // Pour Petite, Garde, et Garde Sans : le chien appartient au preneur
+    finalTakerCards = [...takerCards, ...gameState.dog];
+  }
+
+  // L'écart est toujours pour le preneur
+  const takerDiscard = gameState.discard;
+
+  // Déterminer qui a gagné le Petit au bout
+  let petitAuBoutWinner: 'taker' | 'defenders' = 'taker';
+  if (gameState.petitAuBout) {
+    // Vérifier dans quel camp se trouve le Petit
+    const petitInTakerCards = finalTakerCards.some(
+      c => c.suit === 'TRUMP' && c.trumpNumber === 1
+    );
+    petitAuBoutWinner = petitInTakerCards ? 'taker' : 'defenders';
+  }
+
+  // Pour l'instant, pas de poignée ni chelem (sera ajouté plus tard si nécessaire)
+  const poignee = gameState.poignee || 'NONE';
+  const poigneeWinner: 'taker' | 'defenders' = 'taker'; // Simplifié pour l'instant
+
+  // Calculer les scores
+  const result = calculateFullRoundResult(
+    finalTakerCards,
+    takerDiscard,
+    taker.id,
+    gameState.players.map(p => p.id),
+    gameState.currentBid,
+    gameState.petitAuBout,
+    petitAuBoutWinner,
+    poignee,
+    poigneeWinner,
+    gameState.chelemAnnounced,
+    gameState.chelemRealized
+  );
+
+  // Mettre à jour les scores des joueurs
+  const players = gameState.players.map(player => ({
+    ...player,
+    score: player.score + result.playerScores[player.id],
+  }));
+
+  return {
+    ...gameState,
+    players,
+    phase: GamePhase.FINISHED,
+  };
+}
