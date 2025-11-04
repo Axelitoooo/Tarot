@@ -22,3 +22,36 @@ export {
   hasPetitSec,
   checkPetitSec,
 } from './shuffle';
+
+export {
+  isValidBid,
+  compareBids,
+  getHighestBid,
+  hasWinningBidder,
+  getBidName,
+  getBidMultiplier,
+  shouldRevealDog,
+  shouldTakerTakeDog,
+  getDogOwner,
+} from './bidding';
+
+export {
+  canDiscardCard,
+  validateDiscard,
+  getDiscardableCards,
+  suggestDiscard,
+  calculateDiscardPoints,
+} from './discard';
+
+export {
+  createGame,
+  startNewRound,
+  placeBid,
+  revealDog,
+  takeDog,
+  makeDiscard,
+  nextDealer,
+  getCurrentPlayer,
+  getTaker,
+  getDefenders,
+} from './gameManager';

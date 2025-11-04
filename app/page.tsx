@@ -16,11 +16,19 @@ export default function Home() {
             <button className="bg-green-felt hover:bg-green-felt-dark text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
               Rejoindre une partie
             </button>
+            <div className="border-t border-gray-300 my-2"></div>
+            <p className="text-sm text-gray-600 text-center">Pages de test</p>
             <a
               href="/test-deck"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center"
             >
               🧪 Test du Deck
+            </a>
+            <a
+              href="/test-game"
+              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center"
+            >
+              🎮 Test Enchères & Écart
             </a>
           </div>
         </div>
