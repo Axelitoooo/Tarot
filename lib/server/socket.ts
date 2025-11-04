@@ -1,13 +1,12 @@
 import { Server as HTTPServer } from 'http';
-import { Socket as NetSocket } from 'net';
 import { Server as SocketIOServer } from 'socket.io';
-import { NextApiRequest, NextApiResponse } from 'next';
 import {
   ServerToClientEvents,
   ClientToServerEvents,
   InterServerEvents,
   SocketData,
 } from '@/types/socket';
+import { SocketServer } from '@/types/next';
 import { roomManager } from './roomManager';
 import {
   placeBid,
@@ -18,27 +17,6 @@ import {
   calculateFinalScores,
   startNewRound,
 } from '@/lib/game';
-
-// Type pour le serveur Socket.io
-export type SocketServer = SocketIOServer<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
->;
-
-// Étendre les types Next.js
-interface SocketServer extends HTTPServer {
-  io?: SocketServer;
-}
-
-interface SocketWithIO extends NetSocket {
-  server: SocketServer;
-}
-
-interface NextApiResponseWithSocket extends NextApiResponse {
-  socket: SocketWithIO;
-}
 
 /**
  * Initialise le serveur Socket.io - ULTRA PUISSANT 💪

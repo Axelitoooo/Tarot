@@ -116,7 +116,8 @@ export function getBidName(bidType: BidType): string {
  * Obtient le multiplicateur de l'enchère
  */
 export function getBidMultiplier(bidType: BidType): number {
-  return BID_MULTIPLIERS[bidType] || 0;
+  if (bidType === BidType.PASS) return 0;
+  return BID_MULTIPLIERS[bidType as Exclude<BidType, BidType.PASS>] || 0;
 }
 
 /**

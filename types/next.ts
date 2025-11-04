@@ -16,12 +16,12 @@ export type SocketServer = SocketIOServer<
   SocketData
 >;
 
-export interface SocketServer extends HTTPServer {
+export interface HTTPServerWithIO extends HTTPServer {
   io?: SocketServer;
 }
 
 export interface SocketWithIO extends NetSocket {
-  server: SocketServer;
+  server: HTTPServerWithIO;
 }
 
 export interface NextApiResponseServerIO extends NextApiResponse {

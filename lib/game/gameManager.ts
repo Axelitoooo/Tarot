@@ -1,4 +1,4 @@
-import { GameState, GamePhase, Player, BidType, PlayerCount, Bid } from '@/types/game';
+import { GameState, GamePhase, Player, BidType, PlayerCount, Bid, PoigneeType } from '@/types/game';
 import { Card } from '@/types/card';
 import { createDeck } from './deck';
 import { dealCards, checkPetitSec } from './shuffle';
@@ -44,7 +44,7 @@ export function createGame(
     currentBid: null,
     discard: [],
     petitAuBout: false,
-    poignee: 'NONE',
+    poignee: PoigneeType.NONE,
     chelemAnnounced: false,
     chelemRealized: false,
     trickNumber: 0,
@@ -441,9 +441,10 @@ function resolveTrick(gameState: GameState): GameState {
       // Ajouter l'Excuse aux plis du propriétaire
       const excuseOwnerIndex = gameState.players.findIndex(p => p.id === excuseOwnerId);
       if (excuseOwnerIndex !== -1 && excuseCard) {
+        const excuseCardNonNull = excuseCard; // TypeScript type narrowing
         const players = gameState.players.map((p, i) =>
           i === excuseOwnerIndex
-            ? { ...p, tricksWon: [...p.tricksWon, [excuseCard]] }
+            ? { ...p, tricksWon: [...p.tricksWon, [excuseCardNonNull]] }
             : p
         );
         gameState = { ...gameState, players };
