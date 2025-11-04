@@ -16,6 +16,12 @@ export default function Home() {
             <button className="bg-green-felt hover:bg-green-felt-dark text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
               Rejoindre une partie
             </button>
+            <a
+              href="/test-deck"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg text-center"
+            >
+              🧪 Test du Deck
+            </a>
           </div>
         </div>
       </div>
