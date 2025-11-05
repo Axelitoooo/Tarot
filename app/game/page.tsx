@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { GameState, BidType, GamePhase, PlayerCount, RoundResult, POIGNEE_POINTS } from '@/types/game';
 import { Card, Suit } from '@/types/card';
 import {
@@ -25,6 +26,7 @@ import { decideBid, chooseCardToPlay, chooseDiscard } from '@/lib/ai/player';
 import GameBoard from '@/components/GameBoard';
 import PremiumGameBoard from '@/components/PremiumGameBoard';
 import PlayerHand from '@/components/PlayerHand';
+import PlayerHandFan from '@/components/PlayerHandFan';
 import TarotCard from '@/components/TarotCard';
 import GameNotification, { Notification } from '@/components/GameNotification';
 import GameHistory, { HistoryEntry } from '@/components/GameHistory';
@@ -519,42 +521,41 @@ export default function GamePage() {
           </div>
         )}
 
-        {/* Panel d'écart */}
+        {/* Phase d'écart - ÉVENTAIL RÉALISTE */}
         {gameState.phase === GamePhase.DISCARDING && taker && (
-          <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-30">
-            <div
-              className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-2xl shadow-2xl border-4 border-yellow-600 max-w-6xl w-full mx-8"
-            >
-              <h2 className="text-3xl font-black text-yellow-400 mb-6 text-center">
-                Écart du Preneur ({selectedCards.size}/6)
-              </h2>
-
-              <div className="grid grid-cols-12 gap-2 mb-6">
-                {taker.hand.map(card => {
-                  const discardable = getDiscardableCards(taker.hand);
-                  const canSelect = discardable.some(c => c.id === card.id);
-                  return (
-                    <TarotCard
-                      key={card.id}
-                      card={card}
-                      onClick={() => canSelect && handleCardSelection(card.id)}
-                      isPlayable={canSelect}
-                      isSelected={selectedCards.has(card.id)}
-                      size="small"
-                    />
-                  );
-                })}
-              </div>
-
-              <button
-                onClick={handleDiscard}
-                disabled={selectedCards.size !== 6}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105"
+          <>
+            {/* Overlay avec bouton valider */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40">
+              <motion.div
+                className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-2xl shadow-2xl border-4 border-yellow-600"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
               >
-                Valider l'écart
-              </button>
+                <h2 className="text-3xl font-black text-yellow-400 mb-4 text-center">
+                  Écart du Preneur
+                </h2>
+                <p className="text-gray-300 text-center mb-6">
+                  Sélectionnez {6 - selectedCards.size} carte{6 - selectedCards.size > 1 ? 's' : ''} à écarter
+                </p>
+                <button
+                  onClick={handleDiscard}
+                  disabled={selectedCards.size !== 6}
+                  className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-xl"
+                >
+                  {selectedCards.size === 6 ? '✅ Valider l\'écart' : `📋 ${selectedCards.size}/6 sélectionnées`}
+                </button>
+              </motion.div>
             </div>
-          </div>
+
+            {/* Main en éventail pour sélection */}
+            <PlayerHandFan
+              cards={taker.hand}
+              playableCards={getDiscardableCards(taker.hand)}
+              selectedCards={selectedCards}
+              onCardSelect={handleCardSelection}
+              maxCards={6}
+            />
+          </>
         )}
 
         {/* Panel de scoring */}
@@ -619,26 +620,24 @@ export default function GamePage() {
           </div>
         )}
 
-        {/* Main du joueur (en bas) */}
+        {/* Main du joueur (en bas) - ÉVENTAIL RÉALISTE */}
         {gameState.phase === GamePhase.PLAYING && (
-          <div className="relative z-20">
-            <PlayerHand
-              cards={humanPlayer.hand}
-              playableCards={
-                isHumanTurn
-                  ? getPlayableCardsInTrick(
-                      humanPlayer.hand,
-                      gameState.currentTrick.map((c, i) => ({
-                        card: c,
-                        playerId: gameState.players[i].id,
-                      })),
-                      isLastTrick
-                    )
-                  : []
-              }
-              onCardClick={isHumanTurn ? handlePlayCard : undefined}
-            />
-          </div>
+          <PlayerHandFan
+            cards={humanPlayer.hand}
+            playableCards={
+              isHumanTurn
+                ? getPlayableCardsInTrick(
+                    humanPlayer.hand,
+                    gameState.currentTrick.map((c, i) => ({
+                      card: c,
+                      playerId: gameState.players[i].id,
+                    })),
+                    isLastTrick
+                  )
+                : []
+            }
+            onCardClick={isHumanTurn ? handlePlayCard : undefined}
+          />
         )}
       </div>
     </div>
