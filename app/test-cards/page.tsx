@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import TarotCard from '@/components/TarotCard';
+import BeautifulTarotCard from '@/components/BeautifulTarotCard';
 import { Card, Suit, Rank } from '@/types/card';
 
 export default function TestCardsPage() {
@@ -209,7 +209,7 @@ export default function TestCardsPage() {
           <div className="flex flex-wrap gap-6 justify-center">
             {sampleCards.filter(c => c.isOudler).map(card => (
               <div key={card.id} className="text-center">
-                <TarotCard
+                <BeautifulTarotCard
                   card={card}
                   size={selectedSize}
                   faceDown={showBack}
@@ -237,7 +237,7 @@ export default function TestCardsPage() {
           <div className="flex flex-wrap gap-6 justify-center">
             {sampleCards.filter(c => c.suit === Suit.TRUMP).map(card => (
               <div key={card.id} className="text-center">
-                <TarotCard
+                <BeautifulTarotCard
                   card={card}
                   size={selectedSize}
                   faceDown={showBack}
@@ -264,7 +264,7 @@ export default function TestCardsPage() {
           <div className="flex flex-wrap gap-6 justify-center">
             {sampleCards.filter(c => c.suit === Suit.HEART || c.suit === Suit.DIAMOND).map(card => (
               <div key={card.id} className="text-center">
-                <TarotCard
+                <BeautifulTarotCard
                   card={card}
                   size={selectedSize}
                   faceDown={showBack}
@@ -291,7 +291,7 @@ export default function TestCardsPage() {
           <div className="flex flex-wrap gap-6 justify-center">
             {sampleCards.filter(c => c.suit === Suit.SPADE || c.suit === Suit.CLUB).map(card => (
               <div key={card.id} className="text-center">
-                <TarotCard
+                <BeautifulTarotCard
                   card={card}
                   size={selectedSize}
                   faceDown={showBack}
@@ -319,7 +319,7 @@ export default function TestCardsPage() {
             <div className="text-center">
               <h3 className="text-lg font-bold mb-3 text-gray-700">Normale (Jouable)</h3>
               <div className="flex justify-center">
-                <TarotCard
+                <BeautifulTarotCard
                   card={sampleCards[4]}
                   size={selectedSize}
                   faceDown={false}
@@ -330,7 +330,7 @@ export default function TestCardsPage() {
             <div className="text-center">
               <h3 className="text-lg font-bold mb-3 text-gray-700">Sélectionnée</h3>
               <div className="flex justify-center">
-                <TarotCard
+                <BeautifulTarotCard
                   card={sampleCards[5]}
                   size={selectedSize}
                   faceDown={false}
@@ -342,7 +342,7 @@ export default function TestCardsPage() {
             <div className="text-center">
               <h3 className="text-lg font-bold mb-3 text-gray-700">Non Jouable</h3>
               <div className="flex justify-center">
-                <TarotCard
+                <BeautifulTarotCard
                   card={sampleCards[6]}
                   size={selectedSize}
                   faceDown={false}
