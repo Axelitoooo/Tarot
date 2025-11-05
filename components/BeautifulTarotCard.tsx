@@ -1,8 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Card as CardType, Suit, Rank } from '@/types/card';
 import { getSuitSymbol, getCardName } from '@/lib/game';
+import { useState, useRef } from 'react';
 
 interface TarotCardProps {
   card: CardType;
@@ -23,6 +24,33 @@ export default function BeautifulTarotCard({
   faceDown = false,
   className = '',
 }: TarotCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Valeurs de mouvement pour l'effet 3D
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], [10, -10]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-10, 10]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    mouseX.set((e.clientX - centerX) / rect.width);
+    mouseY.set((e.clientY - centerY) / rect.height);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
   const getSuitColor = (suit: Suit): string => {
     if (suit === Suit.HEART || suit === Suit.DIAMOND) return '#DC143C';
     if (suit === Suit.TRUMP) return '#1a1a2e';
