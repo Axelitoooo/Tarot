@@ -19,10 +19,15 @@ import {
   getPlayableCardsInTrick,
   calculateFullRoundResult,
   formatScore,
+  getCardName,
 } from '@/lib/game';
+import { decideBid, chooseCardToPlay, chooseDiscard } from '@/lib/ai/player';
 import GameBoard from '@/components/GameBoard';
+import PremiumGameBoard from '@/components/PremiumGameBoard';
 import PlayerHand from '@/components/PlayerHand';
 import TarotCard from '@/components/TarotCard';
+import GameNotification, { Notification } from '@/components/GameNotification';
+import GameHistory, { HistoryEntry } from '@/components/GameHistory';
 
 export default function GamePage() {
   const [gameState, setGameState] = useState<GameState | null>(null);
@@ -31,6 +36,112 @@ export default function GamePage() {
   const [error, setError] = useState<string>('');
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
   const [showBidPanel, setShowBidPanel] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+
+  // Helper: Ajouter une notification
+  const addNotification = (message: string, type: Notification['type']) => {
+    const id = `notif-${Date.now()}-${Math.random()}`;
+    setNotifications(prev => [...prev, { id, message, type }]);
+  };
+
+  // Helper: Supprimer une notification
+  const removeNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  // Helper: Ajouter une entrée d'historique
+  const addHistory = (player: string, action: string, details?: string, icon: string = '🎴') => {
+    const id = `history-${Date.now()}-${Math.random()}`;
+    setHistory(prev => [...prev, { id, timestamp: new Date(), player, action, details, icon }]);
+  };
+
+  // IA: Enchères automatiques pour les joueurs non-humains (STRATÉGIE AVANCÉE)
+  useEffect(() => {
+    if (!gameState || gameState.phase !== GamePhase.BIDDING) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const isAI = gameState.currentPlayerIndex !== 0; // Joueur 0 = humain
+
+    if (!isAI) return;
+
+    // Délai pour rendre l'IA plus naturelle
+    const timer = setTimeout(() => {
+      try {
+        // Trouver la plus haute enchère actuelle
+        const highestBid = gameState.bids.reduce<BidType | null>((highest, bid) => {
+          if (!highest || bid.type > highest) return bid.type;
+          return highest;
+        }, null);
+
+        // Utiliser l'IA stratégique pour décider
+        const bidType = decideBid(currentPlayer.hand, highestBid);
+
+        const newState = placeBid(gameState, currentPlayer.id, bidType);
+        setGameState(newState);
+        setError('');
+
+        // Notification et historique
+        const bidName = getBidName(bidType);
+        addNotification(`${currentPlayer.name}: ${bidName}`, 'bid');
+        addHistory(currentPlayer.name, `Enchère: ${bidName}`, undefined, '💬');
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    }, 1000 + Math.random() * 500); // Délai variable pour naturalité
+
+    return () => clearTimeout(timer);
+  }, [gameState]);
+
+  // IA: Jouer automatiquement pour les joueurs non-humains (STRATÉGIE AVANCÉE)
+  useEffect(() => {
+    if (!gameState || gameState.phase !== GamePhase.PLAYING) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const isAI = gameState.currentPlayerIndex !== 0; // Joueur 0 = humain
+
+    if (!isAI) return;
+
+    const isLastTrick = gameState.trickNumber === 18;
+
+    // Délai pour rendre l'IA plus naturelle
+    const timer = setTimeout(() => {
+      try {
+        const playableCards = getPlayableCardsInTrick(
+          currentPlayer.hand,
+          gameState.currentTrick.map((c, i) => ({
+            card: c,
+            playerId: gameState.players[i].id,
+          })),
+          isLastTrick
+        );
+
+        if (playableCards.length === 0) return;
+
+        // Utiliser l'IA stratégique pour choisir la meilleure carte
+        const cardToPlay = chooseCardToPlay(
+          currentPlayer.hand,
+          playableCards,
+          gameState.currentTrick,
+          isLastTrick,
+          gameState
+        );
+
+        const newState = playCard(gameState, currentPlayer.id, cardToPlay);
+        setGameState(newState);
+        setError('');
+
+        // Notification et historique
+        const cardName = getCardName(cardToPlay);
+        addNotification(`${currentPlayer.name} joue ${cardName}`, 'play');
+        addHistory(currentPlayer.name, `Joue ${cardName}`, undefined, '🎴');
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    }, 1200 + Math.random() * 800); // Délai variable pour naturalité
+
+    return () => clearTimeout(timer);
+  }, [gameState]);
 
   // Calculer automatiquement les scores en phase SCORING
   useEffect(() => {
@@ -290,7 +401,7 @@ export default function GamePage() {
         {/* Zone de jeu centrale */}
         <div className="flex-1 flex items-center justify-center p-8">
           <div className="w-full max-w-6xl aspect-[4/3]">
-            <GameBoard
+            <PremiumGameBoard
               players={gameState.players}
               currentPlayerIndex={gameState.currentPlayerIndex}
               currentTrick={gameState.currentTrick}
@@ -300,6 +411,12 @@ export default function GamePage() {
             />
           </div>
         </div>
+
+        {/* Notifications */}
+        <GameNotification notifications={notifications} onRemove={removeNotification} />
+
+        {/* Historique */}
+        <GameHistory entries={history} />
 
         {/* Panel d'enchères */}
         {gameState.phase === GamePhase.BIDDING && (
