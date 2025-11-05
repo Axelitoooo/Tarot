@@ -26,23 +26,29 @@ export default function PlayerHandFan({
 
   // Calculer l'angle de rotation pour chaque carte dans l'éventail
   const getCardTransform = (index: number, total: number) => {
-    // Angle maximum de l'éventail (en degrés)
-    const maxSpread = Math.min(60, total * 3); // Max 60° ou 3° par carte
-
     // Position relative dans l'éventail (-0.5 à 0.5)
     const position = (index - (total - 1) / 2) / Math.max(total - 1, 1);
 
-    // Angle de rotation de cette carte
-    const rotation = position * maxSpread;
+    // Angle de rotation de cette carte (plus petit pour meilleure lisibilité)
+    const maxAngle = 40; // Angle max de l'éventail en degrés
+    const rotation = position * maxAngle;
 
-    // Rayon de l'arc (plus grand = plus plat)
-    const radius = 800;
+    // Espacement horizontal BEAUCOUP plus large pour lisibilité
+    let spacing;
+    if (total <= 5) {
+      spacing = 140; // Très espacé pour peu de cartes
+    } else if (total <= 10) {
+      spacing = 110; // Bien espacé
+    } else if (total <= 15) {
+      spacing = 85; // Espace moyen
+    } else {
+      spacing = 70; // Plus compact mais toujours lisible
+    }
 
-    // Position X (écartement horizontal)
-    const x = position * (total <= 10 ? 80 : 60); // Moins d'espace si beaucoup de cartes
+    const x = position * spacing * total * 0.4; // Multiplier pour étaler
 
-    // Position Y (forme l'arc)
-    const y = Math.abs(position) * Math.abs(position) * 30; // Arc parabolique
+    // Arc plus prononcé pour effet réaliste
+    const y = Math.abs(position) * Math.abs(position) * 80;
 
     return {
       rotation,
@@ -60,8 +66,8 @@ export default function PlayerHandFan({
   const isCardSelected = (cardId: string) => selectedCards.has(cardId);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 flex items-end justify-center pb-4 pointer-events-none z-30">
-      <div className="relative" style={{ width: '90vw', height: '280px' }}>
+    <div className="fixed bottom-0 left-0 right-0 flex items-end justify-center pb-2 pointer-events-none z-30">
+      <div className="relative" style={{ width: '100vw', height: '320px' }}>
         <AnimatePresence mode="popLayout">
           {cards.map((card, index) => {
             const transform = getCardTransform(index, cards.length);
@@ -176,7 +182,7 @@ export default function PlayerHandFan({
                   >
                     <BeautifulTarotCard
                       card={card}
-                      size="medium"
+                      size="small"
                       isPlayable={isPlayable}
                       isSelected={isSelected}
                     />
