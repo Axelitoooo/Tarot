@@ -53,3 +53,42 @@ body {
   transform: translateY(-4px);
   transition: all 0.2s ease;
 }
+
+/* Subtle glow animation for special badges */
+@keyframes gentle-glow {
+  0%, 100% {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3),
+                0 4px 8px rgba(0,0,0,0.15),
+                0 0 10px rgba(212,175,55,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.4),
+                inset 0 -1px 0 rgba(0,0,0,0.2);
+  }
+  50% {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3),
+                0 4px 8px rgba(0,0,0,0.15),
+                0 0 20px rgba(212,175,55,0.5),
+                0 0 30px rgba(212,175,55,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.5),
+                inset 0 -1px 0 rgba(0,0,0,0.2);
+  }
+}
+
+/* Smooth card flip animation */
+@keyframes card-flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Subtle shine effect for realistic cards */
+@keyframes subtle-shine {
+  0%, 100% {
+    background-position: -200% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+}

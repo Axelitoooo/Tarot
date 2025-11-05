@@ -57,6 +57,22 @@ export default function Home() {
                 </div>
               </Link>
 
+              {/* Bouton Cartes Réalistes - NOUVEAU */}
+              <Link
+                href="/test-cards"
+                className="group relative bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 hover:from-amber-500 hover:via-amber-600 hover:to-amber-700 text-white font-black text-xl py-5 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-card hover:shadow-card-hover text-center overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                <div className="relative flex items-center justify-center gap-2">
+                  <span className="text-2xl">🎴</span>
+                  <span>CARTES RÉALISTES</span>
+                  <span className="ml-2 text-xs bg-red-500 px-2 py-1 rounded-full animate-pulse">NOUVEAU</span>
+                </div>
+              </Link>
+              <p className="text-center text-sm text-amber-300 -mt-3 italic">
+                ✨ Découvrez les nouvelles cartes avec design authentique !
+              </p>
+
               {/* Séparateur décoratif */}
               <div className="relative my-2">
                 <div className="absolute inset-0 flex items-center">

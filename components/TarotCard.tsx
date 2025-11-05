@@ -39,7 +39,9 @@ export default function TarotCard({
   if (faceDown) {
     return (
       <div
-        className={`${sizeClasses[size]} rounded-lg cursor-default ${className}`}
+        className={`${sizeClasses[size]} rounded-lg cursor-default transition-all duration-300 ease-out ${
+          onClick && isPlayable ? 'hover:scale-[1.05] hover:-translate-y-2' : ''
+        } ${className}`}
         style={{
           background: `
             linear-gradient(180deg,
@@ -205,11 +207,12 @@ export default function TarotCard({
         rounded-lg
         transition-all
         duration-300
+        ease-out
         transform
-        ${onClick && isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-4 hover:shadow-2xl' : ''}
+        ${onClick && isPlayable ? 'cursor-pointer hover:scale-[1.08] hover:-translate-y-3 hover:rotate-[1deg]' : ''}
         ${!isPlayable ? 'opacity-50 cursor-not-allowed grayscale' : ''}
-        ${isSelected ? 'ring-4 ring-blue-500 scale-110 -translate-y-4 shadow-2xl' : ''}
-        ${isOudler ? 'ring-2 ring-yellow-400' : ''}
+        ${isSelected ? 'ring-4 ring-blue-400/60 scale-[1.08] -translate-y-3 rotate-[1deg]' : ''}
+        ${isOudler ? 'ring-2 ring-yellow-400/70' : ''}
         ${className}
       `}
       style={{
@@ -234,7 +237,7 @@ export default function TarotCard({
           ? `
             0 2px 4px rgba(0,0,0,0.2),
             0 4px 8px rgba(0,0,0,0.15),
-            0 8px 16px rgba(0,0,0,0.1),
+            0 8px 16px rgba(0,0,0,0.12),
             0 16px 32px rgba(0,0,0,0.1),
             inset 0 1px 0 rgba(255,255,255,0.9),
             inset 0 -1px 0 rgba(0,0,0,0.1)
@@ -246,6 +249,8 @@ export default function TarotCard({
             inset 0 1px 0 rgba(255,255,255,0.9),
             inset 0 -1px 0 rgba(0,0,0,0.1)
           `,
+        transformOrigin: 'center bottom',
+        willChange: isPlayable ? 'transform, box-shadow' : 'auto',
       }}
     >
       <div className="w-full h-full p-2 flex flex-col relative">
@@ -466,7 +471,7 @@ export default function TarotCard({
         {/* BADGE BOUT */}
         {isOudler && (
           <div
-            className="absolute -top-2 -right-2 text-xs font-black px-2 py-1 rounded-full z-20 animate-pulse"
+            className="absolute -top-2 -right-2 text-xs font-black px-2 py-1 rounded-full z-20"
             style={{
               background: 'linear-gradient(135deg, #D4AF37 0%, #C9A861 50%, #B8942C 100%)',
               color: '#3A2F1E',
@@ -479,6 +484,7 @@ export default function TarotCard({
               border: '1.5px solid #E8C66A',
               textShadow: '0 1px 0 rgba(255,255,255,0.3)',
               fontFamily: 'serif',
+              animation: 'gentle-glow 3s ease-in-out infinite',
             }}
           >
             ★ BOUT
