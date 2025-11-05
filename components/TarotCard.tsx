@@ -20,12 +20,12 @@ export default function TarotCard({
   faceDown = false,
   className = '',
 }: TarotCardProps) {
-  // Couleurs pour chaque couleur de carte
+  // Couleurs authentiques pour chaque couleur de carte
   const getSuitColor = (suit: Suit): string => {
-    if (suit === Suit.HEART || suit === Suit.DIAMOND) return '#DC143C'; // Rouge crimson
-    if (suit === Suit.TRUMP) return '#4B0082'; // Indigo pour atouts
-    if (suit === Suit.EXCUSE) return '#FFD700'; // Or pour l'Excuse
-    return '#2C3E50'; // Noir bleuté pour Pique/Trèfle
+    if (suit === Suit.HEART || suit === Suit.DIAMOND) return '#B8282E'; // Rouge vermillon authentique
+    if (suit === Suit.TRUMP) return '#2C1A52'; // Indigo foncé royal
+    if (suit === Suit.EXCUSE) return '#C9A861'; // Or ancien mat
+    return '#1A1A1A'; // Noir profond pour Pique/Trèfle
   };
 
   // Tailles des cartes
@@ -39,27 +39,132 @@ export default function TarotCard({
   if (faceDown) {
     return (
       <div
-        className={`${sizeClasses[size]} rounded-xl cursor-default shadow-xl ${className}`}
+        className={`${sizeClasses[size]} rounded-lg cursor-default transition-all duration-300 ease-out ${
+          onClick && isPlayable ? 'hover:scale-[1.05] hover:-translate-y-2' : ''
+        } ${className}`}
         style={{
-          background: 'linear-gradient(145deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
-          border: '3px solid #654321',
+          background: `
+            linear-gradient(180deg,
+              rgba(0,0,0,0.15) 0%,
+              transparent 3%,
+              transparent 97%,
+              rgba(0,0,0,0.25) 100%
+            ),
+            repeating-linear-gradient(
+              90deg,
+              #6B4423 0px,
+              #7A4F2A 2px,
+              #8B5A31 4px,
+              #6B4423 6px
+            ),
+            linear-gradient(145deg, #7A4F2A 0%, #6B4423 50%, #7A4F2A 100%)
+          `,
+          border: '2px solid #4A3218',
+          boxShadow: `
+            0 2px 4px rgba(0,0,0,0.3),
+            0 4px 8px rgba(0,0,0,0.2),
+            0 8px 16px rgba(0,0,0,0.15),
+            inset 0 1px 0 rgba(255,255,255,0.1),
+            inset 0 -1px 0 rgba(0,0,0,0.3)
+          `,
         }}
       >
-        <div className="w-full h-full p-2 flex items-center justify-center relative overflow-hidden rounded-lg">
-          {/* Motif du dos */}
-          <div className="absolute inset-1 border-4 border-double border-gold rounded-lg bg-gradient-to-br from-yellow-700 via-yellow-800 to-yellow-900"></div>
+        <div className="w-full h-full p-2 flex items-center justify-center relative overflow-hidden rounded">
+          {/* Texture bois subtile */}
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: `
+                repeating-linear-gradient(
+                  0deg,
+                  transparent,
+                  transparent 2px,
+                  rgba(0,0,0,0.1) 2px,
+                  rgba(0,0,0,0.1) 3px
+                )
+              `,
+            }}
+          />
 
-          {/* Décoration centrale */}
-          <div className="relative z-10 flex flex-col items-center justify-center">
-            <div className="text-4xl mb-1">🃏</div>
-            <div className="text-xs font-bold text-gold-light">TAROT</div>
+          {/* Bordure intérieure dorée ornée */}
+          <div
+            className="absolute inset-2 rounded"
+            style={{
+              border: '3px double #C9A861',
+              boxShadow: 'inset 0 0 0 1px rgba(201,168,97,0.3)',
+            }}
+          >
+            {/* Motif central décoratif */}
+            <div className="w-full h-full flex items-center justify-center relative">
+              {/* Fond du motif central */}
+              <div
+                className="absolute inset-4 rounded-sm"
+                style={{
+                  background: 'radial-gradient(ellipse at center, rgba(201,168,97,0.25) 0%, transparent 70%)',
+                }}
+              />
+
+              {/* Décoration centrale */}
+              <div className="relative z-10 flex flex-col items-center justify-center">
+                <div
+                  className="text-4xl mb-1 filter drop-shadow-md"
+                  style={{
+                    filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.4))',
+                  }}
+                >
+                  🃏
+                </div>
+                <div
+                  className="text-xs font-bold tracking-widest"
+                  style={{
+                    color: '#C9A861',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                    fontFamily: 'serif',
+                  }}
+                >
+                  TAROT
+                </div>
+              </div>
+
+              {/* Ornements coins avec floriture */}
+              <div
+                className="absolute top-0 left-0 text-sm"
+                style={{
+                  color: '#C9A861',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                }}
+              >
+                ✦
+              </div>
+              <div
+                className="absolute top-0 right-0 text-sm"
+                style={{
+                  color: '#C9A861',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                }}
+              >
+                ✦
+              </div>
+              <div
+                className="absolute bottom-0 left-0 text-sm"
+                style={{
+                  color: '#C9A861',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                }}
+              >
+                ✦
+              </div>
+              <div
+                className="absolute bottom-0 right-0 text-sm"
+                style={{
+                  color: '#C9A861',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                }}
+              >
+                ✦
+              </div>
+            </div>
           </div>
-
-          {/* Motifs décoratifs coins */}
-          <div className="absolute top-1 left-1 text-gold text-xs">❖</div>
-          <div className="absolute top-1 right-1 text-gold text-xs">❖</div>
-          <div className="absolute bottom-1 left-1 text-gold text-xs">❖</div>
-          <div className="absolute bottom-1 right-1 text-gold text-xs">❖</div>
         </div>
       </div>
     );
@@ -99,30 +204,84 @@ export default function TarotCard({
       onClick={onClick && isPlayable ? onClick : undefined}
       className={`
         ${sizeClasses[size]}
-        rounded-xl
+        rounded-lg
         transition-all
         duration-300
+        ease-out
         transform
-        ${onClick && isPlayable ? 'cursor-pointer hover:scale-110 hover:-translate-y-4 hover:shadow-2xl' : ''}
+        ${onClick && isPlayable ? 'cursor-pointer hover:scale-[1.08] hover:-translate-y-3 hover:rotate-[1deg]' : ''}
         ${!isPlayable ? 'opacity-50 cursor-not-allowed grayscale' : ''}
-        ${isSelected ? 'ring-4 ring-blue-500 scale-110 -translate-y-4 shadow-2xl' : 'shadow-xl'}
-        ${isOudler ? 'ring-2 ring-yellow-400' : ''}
+        ${isSelected ? 'ring-4 ring-blue-400/60 scale-[1.08] -translate-y-3 rotate-[1deg]' : ''}
+        ${isOudler ? 'ring-2 ring-yellow-400/70' : ''}
         ${className}
       `}
       style={{
-        background: 'linear-gradient(to bottom, #FFFEF5 0%, #FFF9E5 50%, #FFFEF5 100%)',
-        border: '3px solid #8B7355',
+        background: `
+          linear-gradient(180deg,
+            rgba(255,255,255,0.4) 0%,
+            transparent 10%,
+            transparent 90%,
+            rgba(0,0,0,0.05) 100%
+          ),
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 1px,
+            rgba(139,115,85,0.02) 1px,
+            rgba(139,115,85,0.02) 2px
+          ),
+          linear-gradient(to bottom, #F8F6F0 0%, #F5F3E8 50%, #F0EDE0 100%)
+        `,
+        border: '2px solid #8B7355',
         boxShadow: isSelected
-          ? '0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.8)'
-          : '0 8px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8)',
+          ? `
+            0 2px 4px rgba(0,0,0,0.2),
+            0 4px 8px rgba(0,0,0,0.15),
+            0 8px 16px rgba(0,0,0,0.12),
+            0 16px 32px rgba(0,0,0,0.1),
+            inset 0 1px 0 rgba(255,255,255,0.9),
+            inset 0 -1px 0 rgba(0,0,0,0.1)
+          `
+          : `
+            0 1px 2px rgba(0,0,0,0.15),
+            0 2px 4px rgba(0,0,0,0.1),
+            0 4px 8px rgba(0,0,0,0.08),
+            inset 0 1px 0 rgba(255,255,255,0.9),
+            inset 0 -1px 0 rgba(0,0,0,0.1)
+          `,
+        transformOrigin: 'center bottom',
+        willChange: isPlayable ? 'transform, box-shadow' : 'auto',
       }}
     >
       <div className="w-full h-full p-2 flex flex-col relative">
-        {/* BORDURE INTÉRIEURE DÉCORATIVE */}
+        {/* EFFET DE VIEILLISSEMENT SUBTIL */}
         <div
-          className="absolute inset-1 rounded-lg pointer-events-none"
+          className="absolute inset-0 rounded-lg pointer-events-none"
           style={{
-            border: '1px solid rgba(139, 115, 85, 0.3)',
+            background: `
+              radial-gradient(ellipse at 30% 20%, transparent 0%, rgba(139,115,85,0.03) 100%),
+              radial-gradient(ellipse at 70% 80%, transparent 0%, rgba(0,0,0,0.02) 100%)
+            `,
+          }}
+        />
+
+        {/* BORDURE INTÉRIEURE DÉCORATIVE ORNÉE */}
+        <div
+          className="absolute inset-1 rounded pointer-events-none"
+          style={{
+            border: '1px solid rgba(139, 115, 85, 0.4)',
+            boxShadow: `
+              inset 0 0 0 1px rgba(255,255,255,0.3),
+              0 0 0 1px rgba(139, 115, 85, 0.15)
+            `,
+          }}
+        />
+
+        {/* BORDURE EXTÉRIEURE SUBTILE */}
+        <div
+          className="absolute inset-0.5 rounded pointer-events-none"
+          style={{
+            border: '0.5px solid rgba(139, 115, 85, 0.2)',
           }}
         />
 
@@ -133,6 +292,8 @@ export default function TarotCard({
             style={{
               color: suitColor,
               fontSize: size === 'small' ? '16px' : size === 'medium' ? '20px' : '24px',
+              textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+              fontFamily: 'serif',
             }}
           >
             {isTrump || isExcuse ? (
@@ -141,7 +302,9 @@ export default function TarotCard({
               </div>
             ) : (
               <>
-                <div className="mb-0.5">{suitSymbol}</div>
+                <div className="mb-0.5" style={{ filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.1))' }}>
+                  {suitSymbol}
+                </div>
                 <div className="text-xs font-bold mt-0.5">
                   {card.rank === Rank.KING ? 'R' :
                    card.rank === Rank.QUEEN ? 'D' :
@@ -159,14 +322,30 @@ export default function TarotCard({
           {isExcuse ? (
             // L'EXCUSE - Design spécial
             <div className="text-center">
-              <div className="text-5xl mb-2">🃏</div>
               <div
-                className="text-lg font-black"
-                style={{ color: suitColor }}
+                className="text-5xl mb-2"
+                style={{ filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.15))' }}
+              >
+                🃏
+              </div>
+              <div
+                className="text-lg font-black tracking-tight"
+                style={{
+                  color: suitColor,
+                  textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                  fontFamily: 'serif',
+                }}
               >
                 L'EXCUSE
               </div>
-              <div className="text-xs text-gray-600 font-semibold mt-1">
+              <div
+                className="text-xs font-semibold mt-1"
+                style={{
+                  color: '#6B5D4F',
+                  fontFamily: 'serif',
+                  fontStyle: 'italic',
+                }}
+              >
                 Le Mat
               </div>
             </div>
@@ -177,20 +356,40 @@ export default function TarotCard({
                 className="text-7xl font-black leading-none mb-2"
                 style={{
                   color: suitColor,
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  fontFamily: 'serif',
                 }}
               >
                 {card.trumpNumber}
               </div>
               {card.trumpNumber === 1 && (
-                <div className="text-xs font-bold text-gray-700">LE PETIT</div>
+                <div
+                  className="text-xs font-bold"
+                  style={{
+                    color: '#6B5D4F',
+                    fontFamily: 'serif',
+                  }}
+                >
+                  LE PETIT
+                </div>
               )}
               {card.trumpNumber === 21 && (
-                <div className="text-xs font-bold text-gray-700">LE MONDE</div>
+                <div
+                  className="text-xs font-bold"
+                  style={{
+                    color: '#6B5D4F',
+                    fontFamily: 'serif',
+                  }}
+                >
+                  LE MONDE
+                </div>
               )}
               <div
                 className="text-6xl mt-2"
-                style={{ color: suitColor }}
+                style={{
+                  color: suitColor,
+                  filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.15))',
+                }}
               >
                 ★
               </div>
@@ -200,13 +399,20 @@ export default function TarotCard({
             <div className="text-center">
               <div
                 className="text-6xl leading-none mb-2"
-                style={{ color: suitColor }}
+                style={{
+                  color: suitColor,
+                  filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.15))',
+                }}
               >
                 {suitSymbol}
               </div>
               <div
-                className="text-sm font-black"
-                style={{ color: suitColor }}
+                className="text-sm font-black tracking-wide"
+                style={{
+                  color: suitColor,
+                  textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+                  fontFamily: 'serif',
+                }}
               >
                 {rankDisplay}
               </div>
@@ -218,7 +424,10 @@ export default function TarotCard({
                 <div
                   key={i}
                   className="text-2xl"
-                  style={{ color: suitColor }}
+                  style={{
+                    color: suitColor,
+                    filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.1))',
+                  }}
                 >
                   {suitSymbol}
                 </div>
@@ -234,6 +443,8 @@ export default function TarotCard({
             style={{
               color: suitColor,
               fontSize: size === 'small' ? '16px' : size === 'medium' ? '20px' : '24px',
+              textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+              fontFamily: 'serif',
             }}
           >
             {isTrump || isExcuse ? (
@@ -242,7 +453,9 @@ export default function TarotCard({
               </div>
             ) : (
               <>
-                <div className="mb-0.5">{suitSymbol}</div>
+                <div className="mb-0.5" style={{ filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.1))' }}>
+                  {suitSymbol}
+                </div>
                 <div className="text-xs font-bold mt-0.5">
                   {card.rank === Rank.KING ? 'R' :
                    card.rank === Rank.QUEEN ? 'D' :
@@ -258,7 +471,21 @@ export default function TarotCard({
         {/* BADGE BOUT */}
         {isOudler && (
           <div
-            className="absolute -top-2 -right-2 bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-black px-2 py-1 rounded-full shadow-lg z-20 animate-pulse"
+            className="absolute -top-2 -right-2 text-xs font-black px-2 py-1 rounded-full z-20"
+            style={{
+              background: 'linear-gradient(135deg, #D4AF37 0%, #C9A861 50%, #B8942C 100%)',
+              color: '#3A2F1E',
+              boxShadow: `
+                0 2px 4px rgba(0,0,0,0.3),
+                0 4px 8px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.4),
+                inset 0 -1px 0 rgba(0,0,0,0.2)
+              `,
+              border: '1.5px solid #E8C66A',
+              textShadow: '0 1px 0 rgba(255,255,255,0.3)',
+              fontFamily: 'serif',
+              animation: 'gentle-glow 3s ease-in-out infinite',
+            }}
           >
             ★ BOUT
           </div>
