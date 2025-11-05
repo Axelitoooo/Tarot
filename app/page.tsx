@@ -1,128 +1,205 @@
-import WoodBackground from '@/components/WoodBackground';
-import Link from 'next/link';
+'use client';
+
+import { motion } from 'framer-motion';
+import AnimatedBackground from '@/components/AnimatedBackground';
+import AnimatedTitle from '@/components/AnimatedTitle';
+import MenuCard from '@/components/MenuCard';
 
 export default function Home() {
   return (
-    <WoodBackground className="min-h-screen flex flex-col items-center justify-center p-8">
-      {/* Lumière d'ambiance */}
-      <div className="absolute inset-0 bg-gradient-to-b from-yellow-900/20 via-transparent to-black/40 pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Fond dégradé de base */}
+      <div
+        className="fixed inset-0 -z-10"
+        style={{
+          background: 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)',
+        }}
+      />
 
-      <div className="relative z-10 max-w-5xl w-full">
-        {/* Titre principal avec animation */}
-        <div className="text-center mb-12">
-          <h1 className="text-7xl font-black text-gold-light drop-shadow-2xl mb-4 animate-float">
-            🃏 TAROT FRANÇAIS
-          </h1>
-          <div className="w-48 h-1 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-4" />
-          <p className="text-2xl text-wood-lightest font-light tracking-wide">
-            L'art du jeu authentique
-          </p>
-        </div>
+      {/* Texture bois subtile */}
+      <div
+        className="fixed inset-0 -z-10 opacity-10"
+        style={{
+          backgroundImage: `
+            repeating-linear-gradient(
+              90deg,
+              transparent,
+              transparent 2px,
+              rgba(139, 69, 19, 0.3) 2px,
+              rgba(139, 69, 19, 0.3) 4px
+            )
+          `,
+        }}
+      />
 
-        {/* Carte principale avec effet bois */}
-        <div
-          className="bg-gradient-to-br from-wood-darker/95 to-wood-darkest/95 backdrop-blur-sm rounded-3xl shadow-wood p-10 border-4 border-wood-dark relative overflow-hidden"
-        >
-          {/* Décoration interne - Grain de bois */}
-          <div className="absolute inset-0 bg-wood-grain opacity-20 pointer-events-none" />
+      {/* Background animé */}
+      <AnimatedBackground />
 
-          <div className="relative z-10">
-            <p className="text-xl text-center text-wood-lightest mb-8 font-light">
-              Jouez au Tarot Français dans les règles de l'art
-            </p>
+      {/* Contenu principal */}
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-8">
+        <div className="max-w-7xl w-full">
+          {/* Titre animé */}
+          <AnimatedTitle />
 
-            <div className="flex flex-col gap-5">
-              {/* Bouton Multijoueur - Primaire */}
-              <Link
-                href="/multiplayer"
-                className="group relative bg-gradient-to-r from-green-600 via-green-700 to-green-800 hover:from-green-500 hover:via-green-600 hover:to-green-700 text-white font-black text-3xl py-8 px-10 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-card hover:shadow-card-hover text-center overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                <div className="relative">
-                  🌐 MULTIJOUEUR EN LIGNE
-                </div>
-              </Link>
-              <p className="text-center text-sm text-wood-light -mt-3 italic">
-                ⚡ Créez une partie et invitez vos amis en temps réel !
-              </p>
+          {/* Grille de cartes principales */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+          >
+            {/* Multijoueur - Card Large */}
+            <MenuCard
+              href="/multiplayer"
+              icon="🌐"
+              title="MULTIJOUEUR"
+              description="Créez une partie et invitez vos amis en temps réel ! Jouez ensemble où que vous soyez."
+              gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+              delay={0}
+              large
+            />
 
-              {/* Bouton Mode Solo */}
-              <Link
-                href="/game"
-                className="group relative bg-gradient-to-r from-gold-dark via-gold to-gold-light hover:from-gold hover:via-gold-light hover:to-yellow-300 text-wood-darkest font-black text-2xl py-6 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-card hover:shadow-card-hover text-center overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                <div className="relative">
-                  🎮 MODE SOLO
-                </div>
-              </Link>
+            {/* Mode Solo */}
+            <MenuCard
+              href="/game"
+              icon="🎮"
+              title="MODE SOLO"
+              description="Affrontez l'IA dans une partie de Tarot classique. Perfectionnez vos stratégies !"
+              gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+              delay={0.1}
+              large
+            />
+          </motion.div>
 
-              {/* Bouton Cartes Réalistes - NOUVEAU */}
-              <Link
-                href="/test-cards"
-                className="group relative bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 hover:from-amber-500 hover:via-amber-600 hover:to-amber-700 text-white font-black text-xl py-5 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-card hover:shadow-card-hover text-center overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                <div className="relative flex items-center justify-center gap-2">
-                  <span className="text-2xl">🎴</span>
-                  <span>CARTES RÉALISTES</span>
-                  <span className="ml-2 text-xs bg-red-500 px-2 py-1 rounded-full animate-pulse">NOUVEAU</span>
-                </div>
-              </Link>
-              <p className="text-center text-sm text-amber-300 -mt-3 italic">
-                ✨ Découvrez les nouvelles cartes avec design authentique !
-              </p>
+          {/* Carte Showcase Réaliste */}
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.7, duration: 0.6 }}
+          >
+            <MenuCard
+              href="/test-cards"
+              icon="🎴"
+              title="CARTES RÉALISTES"
+              description="Découvrez nos cartes avec un design ultra-réaliste et authentique. Texture, ombres, animations... tout y est !"
+              gradient="linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
+              delay={0}
+              badge="NOUVEAU"
+            />
+          </motion.div>
 
-              {/* Séparateur décoratif */}
-              <div className="relative my-2">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t-2 border-wood-dark" />
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="px-4 bg-wood-darkest text-wood-light text-sm font-semibold">
-                    PAGES DE DÉVELOPPEMENT
-                  </span>
-                </div>
-              </div>
-
-              {/* Boutons de test - Design sobre */}
-              <div className="grid grid-cols-3 gap-3">
-                <Link
-                  href="/test-deck"
-                  className="bg-wood-dark/50 hover:bg-wood-dark text-wood-lightest font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-md hover:shadow-lg text-center text-sm"
-                >
-                  🧪 Deck
-                </Link>
-                <Link
-                  href="/test-game"
-                  className="bg-wood-dark/50 hover:bg-wood-dark text-wood-lightest font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-md hover:shadow-lg text-center text-sm"
-                >
-                  🎮 Enchères
-                </Link>
-                <Link
-                  href="/test-play"
-                  className="bg-wood-dark/50 hover:bg-wood-dark text-wood-lightest font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-md hover:shadow-lg text-center text-sm"
-                >
-                  🎴 Jouer
-                </Link>
-              </div>
+          {/* Séparateur animé */}
+          <motion.div
+            className="relative my-12"
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ delay: 1.9, duration: 0.8 }}
+          >
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t-2 border-white/20" />
             </div>
-          </div>
+            <div className="relative flex justify-center">
+              <motion.span
+                className="px-6 py-2 bg-gradient-to-r from-gray-900/80 to-gray-800/80 backdrop-blur-sm text-white/70 text-sm font-semibold rounded-full border border-white/10"
+                whileHover={{ scale: 1.05, borderColor: 'rgba(255, 255, 255, 0.3)' }}
+              >
+                PAGES DE DÉVELOPPEMENT
+              </motion.span>
+            </div>
+          </motion.div>
 
-          {/* Coins décoratifs dorés */}
-          <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-gold opacity-50" />
-          <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-gold opacity-50" />
-          <div className="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-gold opacity-50" />
-          <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-gold opacity-50" />
-        </div>
+          {/* Cartes de test - Grid compact */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.1, duration: 0.6 }}
+          >
+            <motion.div whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }}>
+              <a
+                href="/test-deck"
+                className="block group relative overflow-hidden bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '200%' }}
+                  transition={{ duration: 0.6 }}
+                />
+                <div className="relative text-white">
+                  <div className="text-4xl mb-2">🧪</div>
+                  <h3 className="font-bold text-lg mb-1">Test Deck</h3>
+                  <p className="text-sm text-white/80">Distribution & Validation</p>
+                </div>
+              </a>
+            </motion.div>
 
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="text-wood-light text-sm">
-            Fait avec passion • Tarot Français traditionnel
-          </p>
+            <motion.div whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }}>
+              <a
+                href="/test-game"
+                className="block group relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '200%' }}
+                  transition={{ duration: 0.6 }}
+                />
+                <div className="relative text-white">
+                  <div className="text-4xl mb-2">🎲</div>
+                  <h3 className="font-bold text-lg mb-1">Test Enchères</h3>
+                  <p className="text-sm text-white/80">Phase d'enchères</p>
+                </div>
+              </a>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.95 }}>
+              <a
+                href="/test-play"
+                className="block group relative overflow-hidden bg-gradient-to-br from-purple-600 to-pink-700 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '200%' }}
+                  transition={{ duration: 0.6 }}
+                />
+                <div className="relative text-white">
+                  <div className="text-4xl mb-2">🎯</div>
+                  <h3 className="font-bold text-lg mb-1">Test Jeu</h3>
+                  <p className="text-sm text-white/80">Jouer une partie</p>
+                </div>
+              </a>
+            </motion.div>
+          </motion.div>
+
+          {/* Footer avec animation */}
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.5, duration: 1 }}
+          >
+            <motion.div
+              className="inline-block px-6 py-3 bg-white/5 backdrop-blur-sm rounded-full border border-white/10"
+              whileHover={{ scale: 1.05, borderColor: 'rgba(255, 255, 255, 0.2)' }}
+            >
+              <p className="text-white/60 text-sm">
+                ✨ Fait avec passion • Tarot Français traditionnel • 2024
+              </p>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
-    </WoodBackground>
+
+      {/* Effet de vignette */}
+      <div
+        className="fixed inset-0 pointer-events-none -z-5"
+        style={{
+          background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%)',
+        }}
+      />
+    </div>
   );
 }
