@@ -58,6 +58,7 @@ export default function Home() {
   ];
 
   const devItems = [
+    { title: 'Galerie Cartes', icon: '🖼️', path: '/gallery', color: 'from-purple-500 to-pink-600' },
     { title: 'Test Deck', icon: '🧪', path: '/test-deck', color: 'from-emerald-500 to-teal-600' },
     { title: 'Test Enchères', icon: '🎲', path: '/test-game', color: 'from-blue-500 to-indigo-600' },
     { title: 'Test Jeu', icon: '🎯', path: '/test-play', color: 'from-violet-500 to-purple-600' },
@@ -369,7 +370,7 @@ export default function Home() {
           </div>
 
           {/* Cartes de développement */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {devItems.map((item, index) => (
               <motion.div
                 key={item.title}
