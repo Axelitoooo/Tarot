@@ -32,6 +32,78 @@ export default function GamePage() {
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
   const [showBidPanel, setShowBidPanel] = useState(false);
 
+  // IA: Enchères automatiques pour les joueurs non-humains
+  useEffect(() => {
+    if (!gameState || gameState.phase !== GamePhase.BIDDING) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const isAI = gameState.currentPlayerIndex !== 0; // Joueur 0 = humain
+
+    if (!isAI) return;
+
+    // Délai pour rendre l'IA plus naturelle
+    const timer = setTimeout(() => {
+      try {
+        // Logique simple d'IA: passer 80% du temps, petite 20%
+        const trumps = currentPlayer.hand.filter(c => c.suit === Suit.TRUMP);
+        const hasStrongHand = trumps.length >= 8;
+
+        let bidType: BidType;
+        if (hasStrongHand && Math.random() < 0.3) {
+          bidType = BidType.PETITE;
+        } else {
+          bidType = BidType.PASS;
+        }
+
+        const newState = placeBid(gameState, currentPlayer.id, bidType);
+        setGameState(newState);
+        setError('');
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    }, 800); // Délai de 800ms
+
+    return () => clearTimeout(timer);
+  }, [gameState]);
+
+  // IA: Jouer automatiquement pour les joueurs non-humains
+  useEffect(() => {
+    if (!gameState || gameState.phase !== GamePhase.PLAYING) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const isAI = gameState.currentPlayerIndex !== 0; // Joueur 0 = humain
+
+    if (!isAI) return;
+
+    const isLastTrick = gameState.trickNumber === 18;
+
+    // Délai pour rendre l'IA plus naturelle
+    const timer = setTimeout(() => {
+      try {
+        const playableCards = getPlayableCardsInTrick(
+          currentPlayer.hand,
+          gameState.currentTrick.map((c, i) => ({
+            card: c,
+            playerId: gameState.players[i].id,
+          })),
+          isLastTrick
+        );
+
+        if (playableCards.length === 0) return;
+
+        // Logique simple: jouer la première carte jouable
+        const cardToPlay = playableCards[0];
+        const newState = playCard(gameState, currentPlayer.id, cardToPlay);
+        setGameState(newState);
+        setError('');
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    }, 1000); // Délai de 1s
+
+    return () => clearTimeout(timer);
+  }, [gameState]);
+
   // Calculer automatiquement les scores en phase SCORING
   useEffect(() => {
     if (gameState && gameState.phase === GamePhase.SCORING && !roundResult) {

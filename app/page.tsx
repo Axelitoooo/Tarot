@@ -11,12 +11,12 @@ export default function Home() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
-  // Suivi de la souris pour effets parallax
+  // Suivi de la souris pour effets parallax (réduit pour éviter l'overflow)
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20,
+        x: (e.clientX / window.innerWidth - 0.5) * 10,
+        y: (e.clientY / window.innerHeight - 0.5) * 10,
       });
     };
 
@@ -65,9 +65,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen relative overflow-x-hidden overflow-y-auto bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Fond animé avec effet de profondeur */}
-      <div className="fixed inset-0 -z-10">
+      <div className="fixed inset-0 -z-10 overflow-hidden">
         {/* Grille de fond avec parallax */}
         <motion.div
           className="absolute inset-0 opacity-10"
@@ -79,65 +79,69 @@ export default function Home() {
           }}
         />
 
-        {/* Orbes lumineux animés avec parallax */}
+        {/* Orbes lumineux animés avec parallax (réduit pour mobile) */}
         <motion.div
-          className="absolute top-20 left-20 w-96 h-96 bg-purple-500 rounded-full filter blur-[120px]"
+          className="absolute top-20 left-20 w-72 h-72 md:w-96 md:h-96 bg-purple-500 rounded-full filter blur-[120px]"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.2, 0.35, 0.2],
           }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' as const }}
           style={{
-            x: mousePosition.x * 1.5,
-            y: mousePosition.y * 1.5,
+            x: mousePosition.x * 0.5,
+            y: mousePosition.y * 0.5,
           }}
         />
         <motion.div
-          className="absolute bottom-20 right-20 w-96 h-96 bg-pink-500 rounded-full filter blur-[120px]"
+          className="absolute bottom-20 right-20 w-72 h-72 md:w-96 md:h-96 bg-pink-500 rounded-full filter blur-[120px]"
           animate={{
             scale: [1.2, 1, 1.2],
             opacity: [0.3, 0.2, 0.3],
           }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' as const }}
           style={{
-            x: mousePosition.x * -1,
-            y: mousePosition.y * -1,
+            x: mousePosition.x * -0.3,
+            y: mousePosition.y * -0.3,
           }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-500 rounded-full filter blur-[120px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 md:w-96 md:h-96 bg-blue-500 rounded-full filter blur-[120px]"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.15, 0.25, 0.15],
           }}
           transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' as const }}
           style={{
-            x: mousePosition.x * 0.8 - 200,
-            y: mousePosition.y * 0.8 - 200,
+            x: mousePosition.x * 0.2,
+            y: mousePosition.y * 0.2,
           }}
         />
 
-        {/* Particules flottantes */}
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-purple-300 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 0.6, 0.2],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-              ease: 'easeInOut' as const,
-            }}
-          />
-        ))}
+        {/* Particules flottantes (contraintes au viewport) */}
+        {[...Array(15)].map((_, i) => {
+          const left = 10 + Math.random() * 80; // Entre 10% et 90%
+          const top = 10 + Math.random() * 80; // Entre 10% et 90%
+          return (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-purple-300 rounded-full"
+              style={{
+                left: `${left}%`,
+                top: `${top}%`,
+              }}
+              animate={{
+                y: [0, -20, 0],
+                opacity: [0.2, 0.6, 0.2],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 4,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+                ease: 'easeInOut' as const,
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* Contenu principal */}
